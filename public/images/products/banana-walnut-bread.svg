@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#FFF8E8"/>
+  <rect x="90" y="100" width="220" height="120" rx="40" fill="#C89A5A"/>
+  <rect x="95" y="105" width="210" height="60" rx="36" fill="#D0AA6A" opacity="0.6"/>
+  <ellipse cx="200" cy="97" rx="90" ry="18" fill="#E8C07A"/>
+  <!-- Walnuts -->
+  <circle cx="155" cy="150" r="9" fill="#8C6030"/>
+  <circle cx="200" cy="155" r="9" fill="#7D5535"/>
+  <circle cx="245" cy="148" r="9" fill="#8C6030"/>
+  <text x="200" y="250" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="600" fill="#5E3D22">Banana Walnut Whole Wheat Bread</text>
+  <text x="200" y="270" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#9E7352">100% whole wheat · No refined sugar</text>
+</svg>

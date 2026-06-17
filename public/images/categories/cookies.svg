@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <rect width="600" height="400" fill="#F9F2E3"/>
+  <circle cx="300" cy="180" r="100" fill="#D0AA6A" opacity="0.4"/>
+  <circle cx="260" cy="165" r="55" fill="#C89A5A"/><circle cx="340" cy="195" r="48" fill="#D0AA6A"/>
+  <circle cx="268" cy="158" r="6" fill="#8C6030"/><circle cx="252" cy="174" r="6" fill="#3D7A20"/>
+  <circle cx="274" cy="178" r="6" fill="#8C6030"/>
+  <text x="300" y="320" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="700" fill="#5E3D22">Cookies &amp; Biscuits</text>
+</svg>

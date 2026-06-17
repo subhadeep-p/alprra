@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#2D5016"/>
+  <circle cx="900" cy="315" r="350" fill="#3D7A20" opacity="0.3"/>
+  <circle cx="150" cy="100" r="120" fill="#5A9E38" opacity="0.2"/>
+  <text x="100" y="270" font-family="Georgia,serif" font-size="72" font-weight="700" fill="white">alprra</text>
+  <text x="100" y="340" font-family="Arial,sans-serif" font-size="28" fill="#D4E8C4">Snack Better. Live Better.</text>
+  <text x="100" y="400" font-family="Arial,sans-serif" font-size="20" fill="#A8D18A" opacity="0.9">Premium healthy snacks &amp; baked goods · Made in India</text>
+  <circle cx="108" cy="185" r="42" fill="#5A9E38"/>
+  <path d="M108 155 C95 165 90 180 95 195 C100 210 115 215 125 210 C120 200 118 188 120 178 C110 182 104 175 108 155Z" fill="white"/>
+  <line x1="108" y1="215" x2="108" y2="195" stroke="white" stroke-width="3" stroke-linecap="round"/>
+</svg>

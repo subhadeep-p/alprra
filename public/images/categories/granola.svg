@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <rect width="600" height="400" fill="#FDFAF4"/>
+  <ellipse cx="300" cy="195" rx="160" ry="70" fill="#E8D3A3" opacity="0.5"/>
+  <ellipse cx="240" cy="185" rx="35" ry="20" fill="#C89A5A" transform="rotate(-12 240 185)"/>
+  <ellipse cx="300" cy="178" rx="32" ry="18" fill="#D0AA6A" transform="rotate(8 300 178)"/>
+  <ellipse cx="358" cy="188" rx="35" ry="19" fill="#B88050" transform="rotate(-6 358 188)"/>
+  <circle cx="245" cy="168" r="5" fill="#3D7A20"/><circle cx="308" cy="165" r="5" fill="#3D7A20"/>
+  <text x="300" y="320" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="700" fill="#5E3D22">Granola</text>
+</svg>

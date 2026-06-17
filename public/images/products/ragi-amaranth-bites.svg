@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#F9F2E3"/>
+  <!-- Energy balls -->
+  <circle cx="145" cy="145" r="32" fill="#7D5535"/>
+  <circle cx="145" cy="145" r="29" fill="#8C6030" opacity="0.8"/>
+  <circle cx="200" cy="130" r="36" fill="#6B4028"/>
+  <circle cx="200" cy="130" r="33" fill="#7D4A30" opacity="0.8"/>
+  <circle cx="255" cy="148" r="30" fill="#7D5535"/>
+  <circle cx="255" cy="148" r="27" fill="#8C6030" opacity="0.8"/>
+  <!-- Coconut flake texture -->
+  <line x1="138" y1="135" x2="148" y2="140" stroke="#E8D3A3" stroke-width="2" stroke-linecap="round"/>
+  <line x1="152" y1="140" x2="142" y2="148" stroke="#E8D3A3" stroke-width="2" stroke-linecap="round"/>
+  <line x1="192" y1="120" x2="204" y2="126" stroke="#E8D3A3" stroke-width="2" stroke-linecap="round"/>
+  <line x1="207" y1="128" x2="195" y2="136" stroke="#E8D3A3" stroke-width="2" stroke-linecap="round"/>
+  <text x="200" y="228" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="600" fill="#5E3D22">Ragi Amaranth Energy Bites</text>
+  <text x="200" y="250" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#9E7352">Calcium-rich ragi · Kid friendly · No bake</text>
+</svg>

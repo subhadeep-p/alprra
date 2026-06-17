@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <rect width="600" height="400" fill="#FFF8E8"/>
+  <rect x="140" y="155" width="320" height="90" rx="16" fill="#CC9400"/>
+  <rect x="145" y="160" width="310" height="40" rx="13" fill="#FFB800" opacity="0.7"/>
+  <text x="300" y="320" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="700" fill="#5E3D22">Energy Bars</text>
+</svg>

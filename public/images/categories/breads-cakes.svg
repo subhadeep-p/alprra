@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <rect width="600" height="400" fill="#FFF8E8"/>
+  <rect x="150" y="180" width="300" height="100" rx="50" fill="#C89A5A"/>
+  <ellipse cx="300" cy="178" rx="130" ry="30" fill="#E8C07A"/>
+  <rect x="155" y="183" width="290" height="45" rx="44" fill="#D0AA6A" opacity="0.5"/>
+  <text x="300" y="330" text-anchor="middle" font-family="Georgia,serif" font-size="22" font-weight="700" fill="#5E3D22">Breads &amp; Cakes</text>
+</svg>

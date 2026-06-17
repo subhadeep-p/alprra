@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#FFF8E8"/>
+  <rect x="90" y="80" width="220" height="110" rx="12" fill="#FFB800" opacity="0.3"/>
+  <rect x="100" y="90" width="200" height="90" rx="10" fill="#CC9400"/>
+  <rect x="100" y="90" width="200" height="90" rx="10" fill="url(#tex)" opacity="0.4"/>
+  <defs><pattern id="tex" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="2" fill="#8C6030" opacity="0.5"/></pattern></defs>
+  <line x1="200" y1="90" x2="200" y2="180" stroke="#B8800A" stroke-width="2" opacity="0.6"/>
+  <line x1="100" y1="135" x2="300" y2="135" stroke="#B8800A" stroke-width="2" opacity="0.6"/>
+  <text x="200" y="228" text-anchor="middle" font-family="Georgia,serif" font-size="16" font-weight="600" fill="#5E3D22">Jowar Peanut Chikki Bar</text>
+  <text x="200" y="250" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#9E7352">12g protein · Vegan · Pure jaggery</text>
+</svg>
