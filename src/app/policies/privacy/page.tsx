@@ -25,7 +25,7 @@ export default function PrivacyPage() {
           <li>Improve our products and website</li>
         </ul>
         <h2>Contact</h2>
-        <p>For privacy queries, email hello@alprra.com</p>
+        <p>For privacy queries, email support@alprra.com</p>
       </div>
     </div>
   )

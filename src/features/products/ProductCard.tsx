@@ -5,7 +5,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronDown } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
-import { Rating } from '@/components/ui/Rating'
 import { AddToCartButton } from '@/features/cart/AddToCartButton'
 import { formatPrice } from '@/lib/utils/format'
 import { cn } from '@/lib/utils/cn'
@@ -64,34 +63,29 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           />
         </Link>
 
-        {/* Desktop hover overlay — gated behind hover media query in CSS */}
+        {/* Ingredient strip — slides up from bottom on hover, food photo stays visible */}
         <div
-          className={cn(
-            'absolute inset-0 bg-espresso-900/85 backdrop-blur-[2px] p-4 flex flex-col justify-end',
-            'opacity-0 transition-opacity duration-250',
-            '@media (hover: hover) { group-hover:opacity-100 }',
-            'pointer-events-none group-hover:pointer-events-auto'
-          )}
-          style={{}}
+          className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out pointer-events-none"
           aria-hidden="true"
         >
-          <p className="text-xs font-semibold uppercase tracking-wider text-cream-300 mb-2">Key Ingredients</p>
-          <ul className="space-y-1 mb-3">
-            {product.ingredients.slice(0, 4).map((ing) => (
-              <li key={ing.name} className="text-xs text-cream-100 flex items-start gap-1.5">
-                <span className="text-honey-400 mt-0.5">•</span>
-                <span>
-                  <strong>{ing.name}</strong>
-                  {ing.benefit && ` — ${ing.benefit}`}
+          <div className="bg-gradient-to-t from-espresso-900/95 to-espresso-900/70 px-3 pt-5 pb-3">
+            <div className="flex flex-wrap gap-1 mb-2">
+              {product.ingredients.slice(0, 3).map((ing) => (
+                <span
+                  key={ing.name}
+                  className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-medium text-white"
+                >
+                  {ing.name}
                 </span>
-              </li>
-            ))}
-          </ul>
-          {product.allergens.length > 0 && (
-            <p className="text-[11px] text-cream-400">
-              <strong className="text-terracotta-300">Contains:</strong> {product.allergens.join(', ')}
-            </p>
-          )}
+              ))}
+            </div>
+            {product.allergens.length > 0 && (
+              <p className="text-[10px] text-cream-300">
+                <span className="text-terracotta-300 font-semibold">Contains: </span>
+                {product.allergens.join(', ')}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -119,11 +113,6 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         <p className="text-xs text-espresso-400 leading-relaxed line-clamp-2">
           {product.shortDescription}
         </p>
-
-        {/* Rating */}
-        {product.rating && (
-          <Rating value={product.rating} size="sm" showValue count={product.reviewCount} />
-        )}
 
         {/* Price */}
         <div className="flex items-baseline gap-2">

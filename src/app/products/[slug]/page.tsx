@@ -6,7 +6,6 @@ import { getProductBySlug, getAllProductSlugs, getRelatedProducts } from '@/lib/
 import { buildProductSchema, buildFAQSchema, buildBreadcrumbSchema } from '@/lib/schema/product'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { Badge } from '@/components/ui/Badge'
-import { Rating } from '@/components/ui/Rating'
 import { Accordion } from '@/components/ui/Accordion'
 import { AddToCartButton } from '@/features/cart/AddToCartButton'
 import { QuantitySelector } from '@/features/products/QuantitySelector'
@@ -59,14 +58,21 @@ export default async function ProductDetailPage({ params }: Props) {
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="container-brand py-4">
-        <ol className="flex items-center gap-2 text-sm text-espresso-400">
+        <ol className="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm text-espresso-400">
           {breadcrumbs.map((crumb, i) => (
-            <li key={crumb.href} className="flex items-center gap-2">
-              {i > 0 && <span aria-hidden="true">/</span>}
+            <li key={crumb.href} className="flex items-center gap-1">
+              {i > 0 && (
+                <span aria-hidden="true" className="mx-0.5 text-espresso-300 select-none">/</span>
+              )}
               {i === breadcrumbs.length - 1 ? (
                 <span className="text-espresso-600 font-medium" aria-current="page">{crumb.name}</span>
               ) : (
-                <Link href={crumb.href} className="hover:text-forest-600 transition-colors">{crumb.name}</Link>
+                <Link
+                  href={crumb.href}
+                  className="hover:text-forest-600 transition-colors min-h-0 leading-none"
+                >
+                  {crumb.name}
+                </Link>
               )}
             </li>
           ))}
@@ -108,10 +114,6 @@ export default async function ProductDetailPage({ params }: Props) {
             </h1>
 
             <p className="text-espresso-400 leading-relaxed">{product.shortDescription}</p>
-
-            {product.rating && (
-              <Rating value={product.rating} showValue count={product.reviewCount} />
-            )}
 
             {/* Price */}
             <div className="flex items-baseline gap-3">

@@ -1,38 +1,39 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { cn } from '@/lib/utils/cn'
 
 interface LogoProps {
   className?: string
   size?: 'sm' | 'md' | 'lg'
+  onDark?: boolean
 }
 
-export function Logo({ className, size = 'md' }: LogoProps) {
-  const sizeMap = {
-    sm: 'text-lg',
-    md: 'text-2xl',
-    lg: 'text-3xl',
-  }
+const sizeMap = {
+  sm: { height: 32, width: 59 },
+  md: { height: 44, width: 81 },
+  lg: { height: 56, width: 103 },
+}
+
+export function Logo({ className, size = 'md', onDark = false }: LogoProps) {
+  const { height, width } = sizeMap[size]
 
   return (
-    <Link href="/" className={cn('flex items-center gap-2 no-underline', className)} aria-label="Alprra — Home">
-      {/* Leaf mark */}
-      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-forest-600" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 text-white">
-          <path
-            d="M12 3C7 3 3 7 3 12c0 4.5 3 8.5 7 9.5V12c0-3.3 2.7-6 6-6h2.5C18 4.5 15 3 12 3z"
-            fill="currentColor"
-          />
-          <path d="M12 21.5V12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-      </span>
+    <Link href="/" className={cn('flex items-center no-underline shrink-0', className)} aria-label="Alprra — Home">
       <span
         className={cn(
-          'font-display font-semibold text-espresso-600 tracking-tight',
-          sizeMap[size]
+          'flex items-center justify-center rounded-xl overflow-hidden',
+          onDark && 'bg-cream-50 px-2 py-1'
         )}
-        style={{ fontFamily: 'var(--font-display)' }}
       >
-        alprra
+        <Image
+          src="/images/logo.png"
+          alt="Alprra"
+          height={height}
+          width={width}
+          className="object-contain"
+          priority
+          unoptimized
+        />
       </span>
     </Link>
   )

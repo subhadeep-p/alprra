@@ -47,10 +47,10 @@ export function Footer() {
         <div className="container-brand py-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <h2 className="font-display text-xl text-white font-semibold">
+              <h2 className="font-display text-xl font-semibold" style={{ color: '#FDFAF4' }}>
                 Fresh recipes & snack ideas — straight to your inbox
               </h2>
-              <p className="text-forest-100 text-sm mt-1">No spam. Just goodness.</p>
+              <p className="text-cream-200 text-sm mt-1 opacity-80">No spam. Just goodness.</p>
             </div>
             <NewsletterForm />
           </div>
@@ -62,7 +62,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand column */}
           <div className="lg:col-span-2">
-            <Logo className="[&_span:last-child]:text-cream-100 [&_span:last-child]:hover:text-white" />
+            <Logo onDark />
             <p className="mt-4 text-sm leading-relaxed text-cream-300 max-w-xs">
               {siteConfig.description}
             </p>

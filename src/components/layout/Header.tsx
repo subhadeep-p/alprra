@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Menu, X, ShoppingCart, Search } from 'lucide-react'
 import { Logo } from './Logo'
 import { siteConfig } from '@/config/site'
@@ -11,6 +12,7 @@ import { useCartStore } from '@/features/cart/cartStore'
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
   const itemCount = useCartStore((s) => s.itemCount())
 
   useEffect(() => {
@@ -18,6 +20,9 @@ export function Header() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  const isActive = (href: string) =>
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/')
 
   return (
     <>
@@ -35,15 +40,24 @@ export function Header() {
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
-            {siteConfig.nav.main.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-sm font-medium text-espresso-500 hover:text-forest-600 transition-colors duration-150"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {siteConfig.nav.main.map((item) => {
+              const active = isActive(item.href)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'relative text-sm font-medium transition-colors duration-150 py-1',
+                    active ? 'text-forest-600' : 'text-espresso-500 hover:text-forest-600'
+                  )}
+                >
+                  {item.label}
+                  {active && (
+                    <span className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full bg-forest-600 transition-opacity duration-150" />
+                  )}
+                </Link>
+              )
+            })}
           </nav>
 
           {/* Actions */}
@@ -69,12 +83,25 @@ export function Header() {
               )}
             </Link>
 
-            <Link
-              href="/products"
-              className="hidden md:inline-flex items-center gap-2 rounded-full bg-forest-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-forest-700 transition-colors"
-            >
-              Shop Now
-            </Link>
+            {/* Context-aware CTA: Checkout when cart has items, Shop Now otherwise */}
+            {itemCount > 0 ? (
+              <Link
+                href="/cart"
+                className="hidden md:inline-flex items-center gap-2 rounded-full bg-honey-400 px-5 py-2.5 text-sm font-semibold text-espresso-700 hover:bg-honey-300 transition-all duration-200 hover:scale-[1.02]"
+              >
+                Checkout
+                <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-espresso-700/15 text-[10px] font-bold">
+                  {itemCount > 9 ? '9+' : itemCount}
+                </span>
+              </Link>
+            ) : (
+              <Link
+                href="/products"
+                className="hidden md:inline-flex items-center gap-2 rounded-full bg-forest-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-forest-700 transition-all duration-200 hover:scale-[1.02]"
+              >
+                Shop Now
+              </Link>
+            )}
 
             {/* Mobile menu toggle */}
             <button
@@ -102,24 +129,42 @@ export function Header() {
             aria-label="Mobile navigation"
             onClick={(e) => e.stopPropagation()}
           >
-            {siteConfig.nav.main.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center h-12 px-2 text-base font-medium text-espresso-600 hover:text-forest-600 hover:bg-cream-50 rounded-xl transition-colors"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {siteConfig.nav.main.map((item) => {
+              const active = isActive(item.href)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    'flex items-center h-12 px-3 text-base font-medium rounded-xl transition-colors',
+                    active
+                      ? 'text-forest-700 bg-forest-50 font-semibold'
+                      : 'text-espresso-600 hover:text-forest-600 hover:bg-cream-50'
+                  )}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
             <div className="mt-4 pt-4 border-t border-cream-100">
-              <Link
-                href="/products"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center h-12 rounded-full bg-forest-600 text-white font-semibold hover:bg-forest-700 transition-colors"
-              >
-                Shop Now
-              </Link>
+              {itemCount > 0 ? (
+                <Link
+                  href="/cart"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center gap-2 h-12 rounded-full bg-honey-400 text-espresso-700 font-semibold hover:bg-honey-300 transition-colors"
+                >
+                  Checkout · {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                </Link>
+              ) : (
+                <Link
+                  href="/products"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center h-12 rounded-full bg-forest-600 text-white font-semibold hover:bg-forest-700 transition-colors"
+                >
+                  Shop Now
+                </Link>
+              )}
             </div>
           </nav>
         </div>
