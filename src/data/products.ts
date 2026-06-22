@@ -49,8 +49,8 @@ export const products: Product[] =
   weight: '200g (approx. 12–14 cookies)',
   sku: 'ALM-OAT-COK-200',
   availability: 'in_stock',
-  rating: ,
-  reviewCount: ,
+  rating: 0,
+  reviewCount: 0,
   isFeatured: true,
   isBestseller: true,
   faq: [
