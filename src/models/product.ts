@@ -9,6 +9,7 @@ export const HealthTagSchema = z.enum([
   'Keto Friendly',
   'Low Calorie',
   'No Preservatives',
+  'No Palm Oil',
   'Whole Grain',
   'Natural Sweetener',
   'Kid Friendly',

@@ -34,7 +34,7 @@ export const products: Product[] =
   ],
   whyTheseIngredients:
     'Almond flour replaces refined maida entirely, bringing protein and healthy fats to every bite. Oats are incredibly nutritious — rich in dietary fiber and naturally gluten-light. Coconut sugar caramelises beautifully and has a glycemic index of around 35, compared to 65 for white sugar, making these cookies a far smarter choice for everyday snacking.',
- /* nutrition: {
+  nutrition: {
     servingSize: '2 cookies (40g)',
     calories: 175,
     protein: 5,
@@ -43,7 +43,7 @@ export const products: Product[] =
     fiber: 3,
     fat: 9,
     sodium: 55,
-  },*/
+  },
   allergens: ['Tree Nuts (Almonds)', 'Dairy'],
   storageInstructions: 'Store in an airtight container at room temperature for up to 10 days. Refrigerate to extend freshness to 3 weeks.',
   weight: '200g (approx. 12–14 cookies)',
