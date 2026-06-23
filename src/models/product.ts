@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const HealthTagSchema = z.enum([
   'High Fiber',
   'No Refined Sugar',
+  'No Added Sugar',
   'Protein Rich',
   'Gluten Conscious',
   'Vegan',
@@ -14,6 +15,12 @@ export const HealthTagSchema = z.enum([
   'Natural Sweetener',
   'Kid Friendly',
   'Diabetic Friendly',
+  'Air Fried',
+  'Oil Conscious',
+  'Grain Free',
+  'Yeast Free',
+  'Healthy Fats',
+  '100% Oats Flour',
 ])
 
 export const NutritionSchema = z.object({
