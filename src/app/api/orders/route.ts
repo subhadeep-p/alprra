@@ -7,6 +7,7 @@ const OrderRequestSchema = z.object({
   customer: CustomerDetailsSchema,
   items: z.array(OrderItemSchema),
   total: z.number(),
+  outOfZone: z.boolean().optional(),
 })
 
 export async function POST(req: NextRequest) {
@@ -41,10 +42,11 @@ Total: ₹${order.total}
       // Send via Resend
       const { Resend } = await import('resend')
       const resend = new Resend(apiKey)
+      const subjectPrefix = order.outOfZone ? '[OUT OF ZONE] ' : ''
       await resend.emails.send({
         from: 'orders@alprra.com',
         to: process.env.ORDER_NOTIFY_EMAIL ?? 'orders@alprra.com',
-        subject: `New Order ${order.orderId} — ₹${order.total}`,
+        subject: `${subjectPrefix}New Order ${order.orderId} — ₹${order.total}`,
         text: emailText,
       })
     } else {

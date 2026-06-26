@@ -4,10 +4,10 @@ export const siteConfig = {
   description:
     'Alprra crafts premium healthy snacks and baked goods — millet cookies, energy bars, granola, and more — made with clean, natural ingredients and no artificial preservatives.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://alprra.com',
-  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919876543210',
+  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '916363132503',
   email: 'support@alprra.com',
   orderEmail: process.env.ORDER_NOTIFY_EMAIL ?? 'orders@alprra.com',
-  phone: '+91 98765 43210',
+  phone: '+91 6363132503',
   address: {
     city: 'Bengaluru',
     state: 'Karnataka',

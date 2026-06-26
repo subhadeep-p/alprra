@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CheckCircle2, MessageCircle, ArrowRight } from 'lucide-react'
+import { CheckCircle2, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { buildMetadata } from '@/lib/seo/metadata'
 
@@ -9,7 +9,14 @@ export const metadata: Metadata = buildMetadata({
   noIndex: true,
 })
 
-export default function CheckoutSuccessPage() {
+export default async function CheckoutSuccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ zone?: string }>
+}) {
+  const { zone } = await searchParams
+  const outOfZone = zone === 'out'
+
   return (
     <div className="container-brand py-20 text-center">
       <div className="max-w-lg mx-auto">
@@ -22,12 +29,14 @@ export default function CheckoutSuccessPage() {
           className="text-3xl font-semibold text-espresso-600 mb-3"
           style={{ fontFamily: 'var(--font-display)' }}
         >
-          Order confirmed!
+          {outOfZone ? 'Thanks for choosing us!' : 'Order confirmed!'}
         </h1>
-        <p className="text-espresso-400 mb-4">
-          Thank you for your order. Your WhatsApp message has been sent to our team.
-          We will confirm your order and delivery slot within minutes.
+        <p className="text-espresso-400 mb-8">
+          {outOfZone
+            ? "We're not delivering to your city yet, but we're working on it. We'll confirm via the email mentioned in the order as soon as we reach you!"
+            : 'Thank you for your order. We have received it and will confirm via the email mentioned in the order.'}
         </p>
+        {/* What happens next — commented out for now
         <div className="bg-forest-50 border border-forest-100 rounded-2xl p-5 mb-8 text-left">
           <div className="flex items-start gap-3">
             <MessageCircle className="h-5 w-5 text-forest-600 mt-0.5 shrink-0" />
@@ -42,6 +51,7 @@ export default function CheckoutSuccessPage() {
             </div>
           </div>
         </div>
+        */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button asChild>
             <Link href="/products">

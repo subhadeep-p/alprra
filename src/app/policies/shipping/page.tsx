@@ -31,7 +31,7 @@ export default function ShippingPolicyPage() {
           <li>₹60 flat fee on orders below ₹599</li>
         </ul>
         <h2>Contact</h2>
-        <p>WhatsApp us at +91 98765 43210 or email support@alprra.com for shipping queries.</p>
+        <p>WhatsApp us at +91 6363132503 or email support@alprra.com for shipping queries.</p>
       </div>
     </div>
   )

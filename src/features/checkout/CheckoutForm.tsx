@@ -6,42 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { MessageCircle, Mail } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
 import { Button } from '@/components/ui/Button'
 import { useCartStore } from '@/features/cart/cartStore'
 import { CheckoutFormSchema, type CheckoutFormValues } from '@/models/order'
 import { formatPrice, generateOrderId } from '@/lib/utils/format'
-import { openExternal } from '@/lib/native/bridge'
-import { siteConfig } from '@/config/site'
-
-function buildWhatsAppMessage(
-  orderId: string,
-  customer: CheckoutFormValues,
-  items: Array<{ name: string; quantity: number; price: number }>,
-  total: number
-): string {
-  const itemLines = items.map((i) => `• ${i.name} x${i.quantity} — ${formatPrice(i.price * i.quantity)}`).join('\n')
-  return [
-    `*New Order from Alprra — ${orderId}*`,
-    '',
-    `*Customer:* ${customer.name}`,
-    `*Phone:* ${customer.phone}`,
-    `*Email:* ${customer.email}`,
-    `*Address:* ${customer.address}, ${customer.city} — ${customer.pincode}`,
-    customer.notes ? `*Notes:* ${customer.notes}` : '',
-    '',
-    '*Order Items:*',
-    itemLines,
-    '',
-    `*Total: ${formatPrice(total)}*`,
-    '',
-    'Please confirm this order and share an expected delivery date. Thank you!',
-  ]
-    .filter((l) => l !== undefined)
-    .join('\n')
-}
 
 export function CheckoutForm() {
   const router = useRouter()
@@ -64,28 +35,20 @@ export function CheckoutForm() {
     const orderId = generateOrderId()
 
     try {
-      // 1. Send to server for email notification (fire-and-forget)
+      const outOfZone = !data.pincode.trim().startsWith('560')
+
       fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, customer: data, items, total: grandTotal }),
-      }).catch(() => {}) // non-blocking
+        body: JSON.stringify({ orderId, customer: data, items, total: grandTotal, outOfZone }),
+      }).catch(() => {})
 
-      // 2. Open WhatsApp with structured message
-      const message = buildWhatsAppMessage(orderId, data, items, grandTotal)
-      const waUrl = `https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent(message)}`
-
-      // Store order id for success page
       sessionStorage.setItem('alprra-last-order', orderId)
-
-      // Clear cart before navigation
       clearCart()
-
-      // Open WhatsApp (through native bridge if in WebView)
-      openExternal(waUrl)
-
-      // Navigate to success
-      router.push(`/checkout/success?order=${orderId}`)
+      const successUrl = outOfZone
+        ? `/checkout/success?order=${orderId}&zone=out`
+        : `/checkout/success?order=${orderId}`
+      router.push(successUrl)
     } catch {
       setSubmitting(false)
     }
@@ -120,7 +83,7 @@ export function CheckoutForm() {
             />
             <Input
               label="Mobile number"
-              placeholder="9876543210"
+              placeholder="6363132503"
               type="tel"
               required
               hint="10-digit Indian mobile number"
@@ -172,13 +135,12 @@ export function CheckoutForm() {
         {/* Submit */}
         <div className="bg-forest-50 rounded-2xl border border-forest-100 p-5">
           <div className="flex items-start gap-3 mb-4">
-            <MessageCircle className="h-5 w-5 text-forest-600 mt-0.5 shrink-0" />
+            <Mail className="h-5 w-5 text-forest-600 mt-0.5 shrink-0" />
             <div>
               <p className="text-sm font-semibold text-espresso-600">How ordering works</p>
               <p className="text-xs text-espresso-400 mt-1">
-                After confirming your details, you will be redirected to WhatsApp with a pre-filled
-                order message. Send it to our team and we will confirm your order and delivery slot
-                within minutes. You will also receive an email confirmation.
+                Submit your details and we will send you an email confirmation. Our team will
+                reach out to confirm your order and delivery slot.
               </p>
             </div>
           </div>
@@ -188,13 +150,9 @@ export function CheckoutForm() {
             loading={submitting}
             className="w-full"
           >
-            <MessageCircle className="h-4 w-4" />
-            {submitting ? 'Processing...' : 'Confirm Order via WhatsApp'}
+            <Mail className="h-4 w-4" />
+            {submitting ? 'Processing...' : 'Confirm Order'}
           </Button>
-          <div className="flex items-center justify-center gap-2 mt-3 text-xs text-espresso-400">
-            <Mail className="h-3 w-3" />
-            Email confirmation sent automatically
-          </div>
         </div>
       </form>
 

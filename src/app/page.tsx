@@ -112,7 +112,7 @@ export default function HomePage() {
               {/* Trust signals */}
               <div className="mt-10 flex flex-wrap gap-6">
                 {[
-                  { stat: '10,000+', label: 'Happy customers' },
+                  { stat: '1000+', label: 'Happy customers' },
                   { stat: '4.8★', label: 'Average rating' },
                   { stat: '100%', label: 'Natural ingredients' },
                 ].map(({ stat, label }) => (
@@ -177,6 +177,11 @@ export default function HomePage() {
             </Button>
           </div>
           <ProductGrid products={featuredProducts} priorityCount={2} />
+          <div className="mt-10 text-center">
+            <Button variant="outline" size="lg" asChild>
+              <Link href="/products">View more products <ArrowRight className="h-4 w-4" /></Link>
+            </Button>
+          </div>
         </div>
       </section>
 

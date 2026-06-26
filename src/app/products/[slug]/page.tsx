@@ -134,7 +134,7 @@ export default async function ProductDetailPage({ params }: Props) {
             <p className="text-sm text-espresso-400">
               Prefer to order via{' '}
               <Link
-                href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '919876543210'}?text=${encodeURIComponent(`Hi! I'd like to order ${product.name} (₹${product.price}). Please confirm availability.`)}`}
+                href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '916363132503'}?text=${encodeURIComponent(`Hi! I'd like to order ${product.name} (₹${product.price}). Please confirm availability.`)}`}
                 className="text-forest-600 font-semibold hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"

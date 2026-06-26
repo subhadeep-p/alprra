@@ -19,7 +19,7 @@ export default function ReturnsPage() {
           <li>Change of mind — not eligible for return (perishable food items)</li>
         </ul>
         <h2>How to claim</h2>
-        <p>WhatsApp us at +91 98765 43210 with your order ID and photos within 24 hours of delivery.</p>
+        <p>WhatsApp us at +91 6363132503 with your order ID and photos within 24 hours of delivery.</p>
       </div>
     </div>
   )
