@@ -56,9 +56,13 @@ export const siteConfig = {
     },
   },
   og: {
-    image: '/images/og/alprra-og.png',
-    width: 1200,
-    height: 630,
+    // NOTE: the previous path /images/og/alprra-og.png did not exist on disk
+    // (the file is actually alprra-og.png.svg), so OG previews + the schema logo
+    // were 404ing. Point at the real raster logo. Swap in a purpose-built
+    // 1200×630 PNG here later if you want a designed share card.
+    image: '/images/logo.png',
+    width: 1408,
+    height: 768,
   },
 } as const
 

@@ -94,7 +94,7 @@ export default function HomePage() {
                 <span className="text-forest-600">good for you.</span>
               </h1>
               <p className="text-lg text-espresso-400 leading-relaxed mb-8 max-w-lg">
-                Premium healthy snacks and baked goods made with clean, natural ingredients —
+                Alprra makes premium healthy snacks and baked goods with clean, natural ingredients —
                 ancient grains, natural sweeteners, real nuts. No refined flour, no artificial
                 preservatives, no compromise.
               </p>
