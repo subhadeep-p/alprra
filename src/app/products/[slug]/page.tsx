@@ -18,12 +18,13 @@ interface Props {
 }
 
 export async function generateStaticParams() {
-  return getAllProductSlugs().map((slug) => ({ slug }))
+  const slugs = await getAllProductSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const product = getProductBySlug(slug)
+  const product = await getProductBySlug(slug)
   if (!product) return {}
   return {
     title: product.seoTitle,
@@ -39,10 +40,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params
-  const product = getProductBySlug(slug)
+  const product = await getProductBySlug(slug)
   if (!product) notFound()
 
-  const related = getRelatedProducts(product, 4)
+  const related = await getRelatedProducts(product, 4)
 
   const breadcrumbs = [
     { name: 'Home', href: '/' },

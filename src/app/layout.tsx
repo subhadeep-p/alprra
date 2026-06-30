@@ -3,6 +3,7 @@ import { Fraunces, Inter } from 'next/font/google'
 import './globals.css'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { HideOnAdminRoutes } from '@/components/layout/HideOnAdminRoutes'
 import { JsonLd } from '@/components/seo/JsonLd'
 import { buildOrganizationSchema, buildWebSiteSchema } from '@/lib/schema/organization'
 import { buildMetadata } from '@/lib/seo/metadata'
@@ -47,11 +48,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main-content" className="skip-link">
           Skip to main content
         </a>
-        <Header />
+        <HideOnAdminRoutes>
+          <Header />
+        </HideOnAdminRoutes>
         <main id="main-content" className="flex-1">
           {children}
         </main>
-        <Footer />
+        <HideOnAdminRoutes>
+          <Footer />
+        </HideOnAdminRoutes>
       </body>
     </html>
   )

@@ -6,6 +6,7 @@ interface LogoProps {
   className?: string
   size?: 'sm' | 'md' | 'lg'
   onDark?: boolean
+  href?: string
 }
 
 const sizeMap = {
@@ -14,11 +15,11 @@ const sizeMap = {
   lg: { height: 56, width: 103 },
 }
 
-export function Logo({ className, size = 'md', onDark = false }: LogoProps) {
+export function Logo({ className, size = 'md', onDark = false, href = '/' }: LogoProps) {
   const { height, width } = sizeMap[size]
 
   return (
-    <Link href="/" className={cn('flex items-center no-underline shrink-0', className)} aria-label="Alprra — Home">
+    <Link href={href} className={cn('flex items-center no-underline shrink-0', className)} aria-label="Alprra — Home">
       <span
         className={cn(
           'flex items-center justify-center rounded-xl overflow-hidden',

@@ -15,9 +15,8 @@ export const metadata: Metadata = buildMetadata({
   keywords: ['healthy snacks shop', 'buy healthy cookies India', 'millet snacks online', 'healthy granola buy'],
 })
 
-export default function ProductsPage() {
-  const products = getAllProducts()
-  const categories = getAllCategories()
+export default async function ProductsPage() {
+  const [products, categories] = await Promise.all([getAllProducts(), getAllCategories()])
 
   return (
     <>

@@ -46,4 +46,22 @@ export const categories: Category[] = [
     seoTitle: 'Healthy Whole Wheat Breads & Cakes | No Refined Sugar | Alprra',
     seoDescription: 'Order Alprra\'s freshly baked whole wheat breads and cakes — made with jaggery, coconut sugar, and natural sweeteners. No refined flour, no preservatives.',
   },
+  {
+    id: 'namkeen',
+    slug: 'namkeen',
+    name: 'Namkeen & Savory',
+    description: 'Light, air-fried Indian savory snacks — roasted, oil-conscious, and free from MSG, palm oil, and artificial flavours.',
+    image: '/images/categories/namkeen.svg',
+    seoTitle: 'Healthy Namkeen & Savory Snacks | Air-Fried, No Palm Oil | Alprra',
+    seoDescription: 'Shop Alprra namkeen — air-fried, oil-conscious Indian savory snacks made with real ingredients. High protein, high fiber, no preservatives.',
+  },
+  {
+    id: 'laddoos',
+    slug: 'laddoos',
+    name: 'Laddoos & Sweets',
+    description: 'Naturally sweetened laddoos and energy bites — bound with dates and made without refined sugar, glucose syrups, or excess ghee.',
+    image: '/images/categories/laddoos.svg',
+    seoTitle: 'Healthy Laddoos & Energy Bites | No Added Sugar | Alprra',
+    seoDescription: 'Buy Alprra laddoos — naturally sweetened with dates, packed with protein and fiber. No added sugar, vegan-friendly, and preservative-free.',
+  },
 ]

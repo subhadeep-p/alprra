@@ -9,22 +9,23 @@ import { JsonLd } from '@/components/seo/JsonLd'
 interface Props { params: Promise<{ category: string }> }
 
 export async function generateStaticParams() {
-  return getAllCategorySlugs().map((category) => ({ category }))
+  const slugs = await getAllCategorySlugs()
+  return slugs.map((category) => ({ category }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { category } = await params
-  const cat = getCategoryBySlug(category)
+  const cat = await getCategoryBySlug(category)
   if (!cat) return {}
   return { title: cat.seoTitle, description: cat.seoDescription }
 }
 
 export default async function CategoryPage({ params }: Props) {
   const { category } = await params
-  const cat = getCategoryBySlug(category)
+  const cat = await getCategoryBySlug(category)
   if (!cat) notFound()
 
-  const products = getProductsByCategory(category)
+  const products = await getProductsByCategory(category)
 
   return (
     <>

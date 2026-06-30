@@ -37,11 +37,23 @@ export function CheckoutForm() {
     try {
       const outOfZone = !data.pincode.trim().startsWith('560')
 
-      fetch('/api/orders', {
+      const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, customer: data, items, total: grandTotal, outOfZone }),
-      }).catch(() => {})
+        body: JSON.stringify({
+          orderId,
+          customer: data,
+          items,
+          subtotal: total,
+          total: grandTotal,
+          outOfZone,
+        }),
+      })
+
+      if (!res.ok) {
+        console.error('[CHECKOUT] Order API returned', res.status)
+        // Still proceed — order may have been partially saved; don't leave user stuck.
+      }
 
       sessionStorage.setItem('alprra-last-order', orderId)
       clearCart()
@@ -49,7 +61,8 @@ export function CheckoutForm() {
         ? `/checkout/success?order=${orderId}&zone=out`
         : `/checkout/success?order=${orderId}`
       router.push(successUrl)
-    } catch {
+    } catch (err) {
+      console.error('[CHECKOUT] Failed to submit order', err)
       setSubmitting(false)
     }
   }

@@ -65,10 +65,10 @@ const ingredients = [
   { name: 'Whole Wheat', fact: 'Bran and germ intact — full nutrition', color: 'bg-cream-200 text-espresso-600' },
 ]
 
-const featuredProducts = getFeaturedProducts(4)
 const homeFaqs = globalFaqs.slice(0, 6)
 
-export default function HomePage() {
+export default async function HomePage() {
+  const featuredProducts = await getFeaturedProducts(4)
   return (
     <>
       <JsonLd data={buildFAQSchema(homeFaqs)} />
