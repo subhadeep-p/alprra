@@ -189,6 +189,23 @@ export type NewsletterSubscriberRow = typeof newsletterSubscribers.$inferSelect
 export type NewNewsletterSubscriberRow = typeof newsletterSubscribers.$inferInsert
 
 // ---------------------------------------------------------------------------
+// site_settings
+// ---------------------------------------------------------------------------
+// Singleton row of admin-editable global settings. `id` is always the literal
+// 'default' — there is exactly one row, upserted in place rather than a
+// generic key/value store, since there's currently only one setting group.
+// ---------------------------------------------------------------------------
+export const siteSettings = pgTable('site_settings', {
+  id: text('id').primaryKey().default('default'),
+  orderCompletionEmailSubject: text('order_completion_email_subject').notNull().default(''),
+  orderCompletionEmailBody: text('order_completion_email_body').notNull().default(''),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+})
+
+export type SiteSettingsRow = typeof siteSettings.$inferSelect
+export type NewSiteSettingsRow = typeof siteSettings.$inferInsert
+
+// ---------------------------------------------------------------------------
 // Relations
 // ---------------------------------------------------------------------------
 export const categoriesRelations = relations(categories, ({ many }) => ({

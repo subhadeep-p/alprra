@@ -53,4 +53,21 @@ describe('ProductSchema', () => {
     const result = ProductSchema.safeParse({ ...baseProduct(), minOrderQuantity: 0 })
     expect(result.success).toBe(false)
   })
+
+  it('accepts an optional itemsPerBox', () => {
+    const result = ProductSchema.safeParse({ ...baseProduct(), itemsPerBox: 6 })
+    expect(result.success).toBe(true)
+    if (result.success) expect(result.data.itemsPerBox).toBe(6)
+  })
+
+  it('defaults itemsPerBox to undefined when omitted', () => {
+    const result = ProductSchema.safeParse(baseProduct())
+    expect(result.success).toBe(true)
+    if (result.success) expect(result.data.itemsPerBox).toBeUndefined()
+  })
+
+  it('rejects an itemsPerBox below 1', () => {
+    const result = ProductSchema.safeParse({ ...baseProduct(), itemsPerBox: 0 })
+    expect(result.success).toBe(false)
+  })
 })

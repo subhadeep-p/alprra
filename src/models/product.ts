@@ -78,6 +78,8 @@ export const ProductSchema = z.object({
   isBestseller: z.boolean().default(false),
   whyTheseIngredients: z.string().optional(),
   minOrderQuantity: z.number().int().min(1).optional(),
+  /** How many units fit in one packaging box (used for the packaging & handling fee). Default 1. */
+  itemsPerBox: z.number().int().min(1).optional(),
 })
 
 export const CategorySchema = z.object({

@@ -9,10 +9,12 @@ export interface CartItem {
   price: number
   image: string
   quantity: number
-  /** Category slug, used to compute the per-category packaging fee at checkout. */
+  /** Category slug. No longer used for pricing (packaging is box-based now), kept for display/analytics. */
   category: string
   /** Per-product minimum order quantity, if the admin configured one. */
   minOrderQuantity?: number
+  /** How many units fit in one packaging box, used to compute the packaging fee at checkout. */
+  itemsPerBox?: number
 }
 
 interface CartState {
@@ -57,6 +59,7 @@ export const useCartStore = create<CartState>()(
                 quantity: seededQuantity,
                 category: product.category,
                 minOrderQuantity: product.minOrderQuantity,
+                itemsPerBox: product.itemsPerBox,
               },
             ],
           }
