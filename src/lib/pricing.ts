@@ -1,7 +1,8 @@
 // Single source of truth for checkout/cart pricing math — delivery is always
 // free (we show the waived ₹60 for the "you saved" UX), and a small
-// packaging & handling fee replaces it: ₹30 minimum, plus ₹10 for every
-// distinct product category once the cart holds more than 2 items.
+// packaging & handling fee replaces it: ₹30 minimum (which already covers the
+// first product category), plus ₹10 for every *additional* distinct category
+// once the cart holds more than 2 items.
 
 export interface PricingLineItem {
   /** Optional so callers with partial data (e.g. older persisted orders) still compile. */
@@ -21,9 +22,11 @@ export const PACKAGING_PER_CATEGORY_FEE = 10
 export const PACKAGING_ITEM_THRESHOLD = 2
 
 /**
- * ₹30 minimum packaging & handling charge. If the cart holds more than
- * `PACKAGING_ITEM_THRESHOLD` items (by quantity), add ₹10 for every distinct
- * product category present in the cart.
+ * ₹30 minimum packaging & handling charge — this base already covers the first
+ * product category. If the cart holds more than `PACKAGING_ITEM_THRESHOLD`
+ * items (by quantity), add ₹10 for every *additional* distinct category beyond
+ * the first. A single-category cart therefore always stays at ₹30, no matter
+ * the quantity.
  */
 export function computePackagingFee(items: PricingLineItem[]): number {
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0)
@@ -32,8 +35,9 @@ export function computePackagingFee(items: PricingLineItem[]): number {
   const distinctCategories = new Set(
     items.map((item) => item.category || '__uncategorized__')
   ).size
+  const extraCategories = Math.max(0, distinctCategories - 1)
 
-  return PACKAGING_BASE_FEE + PACKAGING_PER_CATEGORY_FEE * distinctCategories
+  return PACKAGING_BASE_FEE + PACKAGING_PER_CATEGORY_FEE * extraCategories
 }
 
 export interface OrderTotals {
