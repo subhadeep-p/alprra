@@ -58,7 +58,9 @@ export const ProductSchema = z.object({
   gallery: z.array(z.string()),
   category: z.string(),
   tags: z.array(z.string()),
-  healthTags: z.array(HealthTagSchema),
+  // Health tags are free-form strings so admins can add custom tags beyond the
+  // curated preset list (see HealthTagSchema / ALL_HEALTH_TAGS for the presets).
+  healthTags: z.array(z.string()),
   ingredients: z.array(IngredientSchema),
   benefits: z.array(z.string()),
   nutrition: NutritionSchema,
@@ -75,6 +77,7 @@ export const ProductSchema = z.object({
   isFeatured: z.boolean().default(false),
   isBestseller: z.boolean().default(false),
   whyTheseIngredients: z.string().optional(),
+  minOrderQuantity: z.number().int().min(1).optional(),
 })
 
 export const CategorySchema = z.object({

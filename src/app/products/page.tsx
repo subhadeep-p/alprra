@@ -10,7 +10,7 @@ import Link from 'next/link'
 export const metadata: Metadata = buildMetadata({
   title: 'All Products — Healthy Snacks & Baked Goods',
   description:
-    'Shop all Alprra healthy snacks and baked goods — millet cookies, energy bars, granola, whole wheat breads, and more. No refined sugar, no preservatives. Free delivery above ₹599.',
+    'Shop all Alprra healthy snacks and baked goods — millet cookies, energy bars, granola, whole wheat breads, and more. No refined sugar, no preservatives. Free delivery on every order.',
   path: '/products',
   keywords: ['healthy snacks shop', 'buy healthy cookies India', 'millet snacks online', 'healthy granola buy'],
 })

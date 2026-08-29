@@ -7,10 +7,11 @@ import { useCartStore } from './cartStore'
 import { QuantityStepper } from './QuantityStepper'
 import { Button } from '@/components/ui/Button'
 import { formatPrice } from '@/lib/utils/format'
+import { computeTotals } from '@/lib/pricing'
 
 export function CartView() {
-  const { items, removeItem, updateQuantity, subtotal } = useCartStore()
-  const total = subtotal()
+  const { items, removeItem, updateQuantity } = useCartStore()
+  const { subtotal: total, deliveryOriginal, packagingFee, total: grandTotal } = computeTotals(items)
 
   if (items.length === 0) {
     return (
@@ -58,7 +59,7 @@ export function CartView() {
                 <QuantityStepper
                   value={item.quantity}
                   onChange={(q) => updateQuantity(item.productId, q)}
-                  min={1}
+                  min={item.minOrderQuantity ?? 1}
                 />
                 <button
                   onClick={() => removeItem(item.productId)}
@@ -87,23 +88,26 @@ export function CartView() {
               <span>Subtotal ({items.reduce((s, i) => s + i.quantity, 0)} items)</span>
               <span className="font-semibold text-espresso-600">{formatPrice(total)}</span>
             </div>
-            <div className="flex justify-between text-espresso-500">
+            <div className="flex justify-between items-center text-espresso-500">
               <span>Delivery</span>
-              <span className={total >= 599 ? 'text-forest-600 font-semibold' : 'font-semibold text-espresso-600'}>
-                {total >= 599 ? 'FREE' : formatPrice(60)}
+              <span className="flex items-center gap-1.5">
+                <span className="text-espresso-300 line-through">{formatPrice(deliveryOriginal)}</span>
+                <span className="text-forest-600 font-semibold">FREE</span>
               </span>
             </div>
-            {total < 599 && (
-              <p className="text-xs text-forest-600 bg-forest-50 rounded-lg px-3 py-2">
-                Add {formatPrice(599 - total)} more for free delivery
-              </p>
-            )}
+            <div className="flex justify-between text-espresso-500">
+              <span>Packaging &amp; handling</span>
+              <span className="font-semibold text-espresso-600">{formatPrice(packagingFee)}</span>
+            </div>
+            <p className="text-xs text-forest-600 bg-forest-50 rounded-lg px-3 py-2">
+              You&apos;re saving {formatPrice(deliveryOriginal)} — delivery is free on every order 🎉
+            </p>
           </div>
           <div className="border-t border-cream-200 pt-4 mb-5">
             <div className="flex justify-between">
               <span className="font-semibold text-espresso-600">Total</span>
               <span className="text-xl font-bold text-espresso-600">
-                {formatPrice(total + (total >= 599 ? 0 : 60))}
+                {formatPrice(grandTotal)}
               </span>
             </div>
           </div>

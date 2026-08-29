@@ -13,6 +13,8 @@ interface AddToCartButtonProps {
   size?: 'sm' | 'md' | 'lg' | 'xl'
   className?: string
   fullWidth?: boolean
+  /** Called after the item is added — useful for surfacing MOQ-aware messaging. */
+  onAdded?: () => void
 }
 
 export function AddToCartButton({
@@ -21,6 +23,7 @@ export function AddToCartButton({
   size = 'lg',
   className,
   fullWidth = false,
+  onAdded,
 }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false)
   const addItem = useCartStore((s) => s.addItem)
@@ -28,6 +31,7 @@ export function AddToCartButton({
   function handleAdd() {
     addItem(product, quantity)
     setAdded(true)
+    onAdded?.()
     setTimeout(() => setAdded(false), 2000)
   }
 

@@ -13,15 +13,14 @@ import { Button } from '@/components/ui/Button'
 import { useCartStore } from '@/features/cart/cartStore'
 import { CheckoutFormSchema, type CheckoutFormValues } from '@/models/order'
 import { formatPrice, generateOrderId } from '@/lib/utils/format'
+import { computeTotals } from '@/lib/pricing'
 
 export function CheckoutForm() {
   const router = useRouter()
-  const { items, subtotal, clearCart } = useCartStore()
+  const { items, clearCart } = useCartStore()
   const [submitting, setSubmitting] = useState(false)
 
-  const total = subtotal()
-  const deliveryFee = total >= 599 ? 0 : 60
-  const grandTotal = total + deliveryFee
+  const { subtotal: total, deliveryOriginal, packagingFee, total: grandTotal } = computeTotals(items)
 
   const {
     register,
@@ -196,10 +195,20 @@ export function CheckoutForm() {
               <span>Subtotal</span>
               <span>{formatPrice(total)}</span>
             </div>
-            <div className="flex justify-between text-espresso-500">
+            <div className="flex justify-between items-center text-espresso-500">
               <span>Delivery</span>
-              <span className={deliveryFee === 0 ? 'text-forest-600 font-semibold' : ''}>{deliveryFee === 0 ? 'FREE' : formatPrice(deliveryFee)}</span>
+              <span className="flex items-center gap-1.5">
+                <span className="text-espresso-300 line-through">{formatPrice(deliveryOriginal)}</span>
+                <span className="text-forest-600 font-semibold">FREE</span>
+              </span>
             </div>
+            <div className="flex justify-between text-espresso-500">
+              <span>Packaging &amp; handling</span>
+              <span>{formatPrice(packagingFee)}</span>
+            </div>
+            <p className="text-xs text-forest-600 bg-forest-50 rounded-lg px-3 py-2">
+              You&apos;re saving {formatPrice(deliveryOriginal)} — delivery is free on every order 🎉
+            </p>
           </div>
           <div className="border-t border-cream-200 pt-3 mt-2">
             <div className="flex justify-between font-bold text-espresso-600">
