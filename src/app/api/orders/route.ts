@@ -5,6 +5,7 @@ import { db } from '@/lib/db/client'
 import { users, orders } from '@/lib/db/schema'
 import { rupeesToPaise } from '@/lib/db/products.repo'
 import { computeTotals, ORIGINAL_DELIVERY_FEE } from '@/lib/pricing'
+import { sendEmail } from '@/lib/email/send'
 import { sql } from 'drizzle-orm'
 
 const OrderRequestSchema = z.object({
@@ -23,9 +24,9 @@ export async function POST(req: NextRequest) {
 
     // Recompute pricing server-side rather than trusting client-sent totals —
     // delivery is always free now, and packaging & handling is derived from
-    // the items' categories/quantities (see src/lib/pricing.ts). The
-    // packaging fee isn't broken out into its own DB column (that would need
-    // a schema migration); it's folded into `total` below and still
+    // each item's quantity/itemsPerBox (box count), see src/lib/pricing.ts.
+    // The packaging fee isn't broken out into its own DB column (that would
+    // need a schema migration); it's folded into `total` below and still
     // itemized for the customer in the UI and in the order email.
     const { subtotal: subtotalRupees, deliveryFee: deliveryFeeRupees, packagingFee: packagingFeeRupees, total: totalRupees } =
       computeTotals(order.items)
@@ -116,21 +117,12 @@ Total: ₹${totalRupees}
 =============================
     `.trim()
 
-    const apiKey = process.env.RESEND_API_KEY
-
-    if (apiKey) {
-      const { Resend } = await import('resend')
-      const resend = new Resend(apiKey)
-      const subjectPrefix = order.outOfZone ? '[OUT OF ZONE] ' : ''
-      await resend.emails.send({
-        from: 'orders@alprra.com',
-        to: process.env.ORDER_NOTIFY_EMAIL ?? 'orders@alprra.com',
-        subject: `${subjectPrefix}New Order ${order.orderId} — ₹${totalRupees}`,
-        text: emailText,
-      })
-    } else {
-      console.log('[ORDER]', emailText)
-    }
+    const subjectPrefix = order.outOfZone ? '[OUT OF ZONE] ' : ''
+    await sendEmail({
+      to: process.env.ORDER_NOTIFY_EMAIL ?? 'orders@alprra.com',
+      subject: `${subjectPrefix}New Order ${order.orderId} — ₹${totalRupees}`,
+      text: emailText,
+    })
 
     return NextResponse.json({ success: true, orderId: order.orderId })
   } catch (error) {
