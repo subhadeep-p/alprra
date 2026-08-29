@@ -1,12 +1,15 @@
 // Single source of truth for checkout/cart pricing math — delivery is always
 // free (we show the waived ₹60 for the "you saved" UX), and a small
-// packaging & handling fee replaces it: ₹30 minimum, plus ₹10 for every
-// distinct product category once the cart holds more than 2 items.
+// packaging & handling fee replaces it: ₹30 minimum (which already covers the
+// first packaging box), plus ₹10 for every *additional* box. A product's box
+// count is ceil(quantity ÷ itemsPerBox) — items that ship loosely (itemsPerBox
+// unset or 1) need one box per unit, while items that pack multiple units per
+// box (e.g. muffins, itemsPerBox: 6) only need one box for a whole batch.
 
 export interface PricingLineItem {
-  /** Optional so callers with partial data (e.g. older persisted orders) still compile. */
-  category?: string
   quantity: number
+  /** How many units fit in one packaging box. Defaults to 1 (each unit its own box) when unset. */
+  itemsPerBox?: number
 }
 
 /** The delivery fee we used to charge — shown struck through, never charged anymore. */
@@ -16,24 +19,25 @@ export const ORIGINAL_DELIVERY_FEE = 60
 export const DELIVERY_FEE = 0
 
 export const PACKAGING_BASE_FEE = 30
-export const PACKAGING_PER_CATEGORY_FEE = 10
-/** Packaging surcharge only kicks in once the cart holds more than this many items. */
-export const PACKAGING_ITEM_THRESHOLD = 2
+export const PACKAGING_PER_BOX_FEE = 10
+
+/** Boxes needed for a single line item: ceil(quantity ÷ itemsPerBox), itemsPerBox defaulting to 1. */
+function boxesForLineItem(item: PricingLineItem): number {
+  const itemsPerBox = Math.max(1, item.itemsPerBox ?? 1)
+  return Math.ceil(item.quantity / itemsPerBox)
+}
 
 /**
- * ₹30 minimum packaging & handling charge. If the cart holds more than
- * `PACKAGING_ITEM_THRESHOLD` items (by quantity), add ₹10 for every distinct
- * product category present in the cart.
+ * ₹30 minimum packaging & handling charge — this base already covers the
+ * first packaging box across the whole cart. Add ₹10 for every *additional*
+ * box beyond the first. A cart that only ever fills one box (e.g. 5 muffins
+ * with itemsPerBox: 6) therefore always stays at ₹30, no matter the quantity.
  */
 export function computePackagingFee(items: PricingLineItem[]): number {
-  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0)
-  if (totalQuantity <= PACKAGING_ITEM_THRESHOLD) return PACKAGING_BASE_FEE
+  const totalBoxes = items.reduce((sum, item) => sum + boxesForLineItem(item), 0)
+  const extraBoxes = Math.max(0, totalBoxes - 1)
 
-  const distinctCategories = new Set(
-    items.map((item) => item.category || '__uncategorized__')
-  ).size
-
-  return PACKAGING_BASE_FEE + PACKAGING_PER_CATEGORY_FEE * distinctCategories
+  return PACKAGING_BASE_FEE + PACKAGING_PER_BOX_FEE * extraBoxes
 }
 
 export interface OrderTotals {

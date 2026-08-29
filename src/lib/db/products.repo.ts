@@ -40,6 +40,7 @@ type AttributesBlob = {
   seoDescription?: string
   whyTheseIngredients?: string | null
   minOrderQuantity?: number
+  itemsPerBox?: number
   customFields?: Record<string, unknown>
 }
 
@@ -106,6 +107,7 @@ export function rowToProduct(row: ProductRow, categorySlug: string): Product {
     isBestseller: row.isBestseller,
     whyTheseIngredients: attrs.whyTheseIngredients ?? undefined,
     minOrderQuantity: attrs.minOrderQuantity ?? undefined,
+    itemsPerBox: attrs.itemsPerBox ?? undefined,
   })
 }
 
@@ -127,6 +129,7 @@ function productToAttributes(product: Product): AttributesBlob {
     seoDescription: product.seoDescription,
     whyTheseIngredients: product.whyTheseIngredients ?? null,
     minOrderQuantity: product.minOrderQuantity,
+    itemsPerBox: product.itemsPerBox,
     customFields: {},
   }
 }

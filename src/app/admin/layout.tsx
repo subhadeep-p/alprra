@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { LayoutDashboard, Package, ShoppingBag, LogOut } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingBag, Settings, LogOut } from 'lucide-react'
 import { logoutAction } from './login/actions'
 import { verifySessionToken, SESSION_COOKIE } from '@/lib/auth/session'
 import { Logo } from '@/components/layout/Logo'
@@ -9,6 +9,7 @@ const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingBag },
+  { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

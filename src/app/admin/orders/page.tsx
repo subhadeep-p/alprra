@@ -2,14 +2,12 @@ import { db } from '@/lib/db/client'
 import { orders, users } from '@/lib/db/schema'
 import { desc, eq } from 'drizzle-orm'
 import { ShoppingBag } from 'lucide-react'
+import { OrderStatusControl } from '@/features/admin/OrderStatusControl'
+import type { AdminOrderStatus } from './actions'
 
-const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-honey-100 text-honey-700',
-  confirmed: 'bg-forest-100 text-forest-700',
-  processing: 'bg-forest-100 text-forest-700',
-  shipped: 'bg-forest-200 text-forest-800',
-  delivered: 'bg-forest-200 text-forest-800',
-  cancelled: 'bg-terracotta-100 text-terracotta-700',
+/** Admin only exposes Pending/Completed; any other legacy DB status displays as Pending. */
+function toAdminStatus(dbStatus: string): AdminOrderStatus {
+  return dbStatus === 'delivered' ? 'completed' : 'pending'
 }
 
 export default async function AdminOrdersPage() {
@@ -61,7 +59,6 @@ export default async function AdminOrdersPage() {
                 }
                 const items = order.items as Array<{ name: string; quantity: number; price: number }>
                 const itemSummary = items.map((i) => `${i.name} ×${i.quantity}`).join(', ')
-                const color = STATUS_COLORS[order.status] ?? 'bg-gray-100 text-gray-700'
                 const date = new Date(order.createdAt).toLocaleDateString('en-IN', {
                   day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
                 })
@@ -85,9 +82,7 @@ export default async function AdminOrdersPage() {
                       <span className="font-semibold text-espresso-600">₹{(order.total / 100).toFixed(2)}</span>
                     </td>
                     <td className="px-5 py-4">
-                      <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize ${color}`}>
-                        {order.status}
-                      </span>
+                      <OrderStatusControl orderId={order.id} status={toAdminStatus(order.status)} />
                     </td>
                     <td className="px-5 py-4">
                       {order.outOfZone ? (

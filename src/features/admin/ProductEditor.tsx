@@ -84,6 +84,7 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
   const [isFeatured, setIsFeatured] = useState(initial.isFeatured ?? false)
   const [isBestseller, setIsBestseller] = useState(initial.isBestseller ?? false)
   const [minOrderQuantity, setMinOrderQuantity] = useState(String(initial.minOrderQuantity ?? ''))
+  const [itemsPerBox, setItemsPerBox] = useState(String(initial.itemsPerBox ?? ''))
 
   // Rich fields
   const [gallery, setGallery] = useState<string[]>(initial.gallery ?? [])
@@ -170,6 +171,7 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
     isBestseller,
     whyTheseIngredients: whyTheseIngredients || undefined,
     minOrderQuantity: minOrderQuantity ? Number(minOrderQuantity) : undefined,
+    itemsPerBox: itemsPerBox ? Number(itemsPerBox) : undefined,
   }
 
   const tabs = [
@@ -323,6 +325,11 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
                 <Field label="Minimum order quantity" hint="Leave blank to allow ordering a single item.">
                   <input name="minOrderQuantity" type="number" min="1" step="1" value={minOrderQuantity}
                     onChange={(e) => setMinOrderQuantity(e.target.value)}
+                    className={inputCls} placeholder="1" />
+                </Field>
+                <Field label="Items per box" hint="How many units fit in one packaging box. Leave blank / 1 = each item its own box.">
+                  <input name="itemsPerBox" type="number" min="1" step="1" value={itemsPerBox}
+                    onChange={(e) => setItemsPerBox(e.target.value)}
                     className={inputCls} placeholder="1" />
                 </Field>
               </div>

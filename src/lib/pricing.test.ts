@@ -12,54 +12,45 @@ describe('computePackagingFee', () => {
     expect(computePackagingFee([])).toBe(PACKAGING_BASE_FEE)
   })
 
-  it('charges only the base fee at or below the item threshold (2 items)', () => {
-    expect(computePackagingFee([{ category: 'cookies', quantity: 2 }])).toBe(30)
-    expect(
-      computePackagingFee([
-        { category: 'cookies', quantity: 1 },
-        { category: 'energy-bars', quantity: 1 },
-      ])
-    ).toBe(30)
+  it('charges only the base fee for a single loose unit (itemsPerBox defaults to 1)', () => {
+    expect(computePackagingFee([{ quantity: 1 }])).toBe(30)
   })
 
-  it('adds ₹10 per distinct category once the cart has more than 2 items, same category', () => {
-    // 3 units, 1 category -> 30 + 10*1
-    expect(computePackagingFee([{ category: 'cookies', quantity: 3 }])).toBe(40)
+  it('adds ₹10 per extra box for loose items (itemsPerBox 1) — one box per unit', () => {
+    // 3 loose units -> 3 boxes -> 30 + 10*(3-1)
+    expect(computePackagingFee([{ quantity: 3, itemsPerBox: 1 }])).toBe(50)
   })
 
-  it('adds ₹10 per distinct category once the cart has more than 2 items, mixed categories', () => {
-    // e.g. 2 muffins (breads-cakes) + 1 cookie (cookies) = 3 items, 2 categories -> 30 + 20
+  it('keeps the base fee when a whole batch fits in one box', () => {
+    // 6 muffins, 6 per box -> 1 box -> base only
+    expect(computePackagingFee([{ quantity: 6, itemsPerBox: 6 }])).toBe(30)
+    // partial box still counts as a full box, but here quantity == capacity exactly
+    expect(computePackagingFee([{ quantity: 1, itemsPerBox: 6 }])).toBe(30)
+  })
+
+  it('rounds up to an extra box once capacity is exceeded', () => {
+    // 7 muffins, 6 per box -> ceil(7/6) = 2 boxes -> 30 + 10*(2-1)
+    expect(computePackagingFee([{ quantity: 7, itemsPerBox: 6 }])).toBe(40)
+  })
+
+  it('sums boxes across multiple line items', () => {
+    // 2 loose items (2 boxes) + 6 muffins at 6/box (1 box) = 3 boxes -> 30 + 10*(3-1)
     expect(
       computePackagingFee([
-        { category: 'breads-cakes', quantity: 2 },
-        { category: 'cookies', quantity: 1 },
+        { quantity: 2, itemsPerBox: 1 },
+        { quantity: 6, itemsPerBox: 6 },
       ])
     ).toBe(50)
   })
 
-  it('counts categories, not line items — repeated categories only count once', () => {
-    // 3 items across 2 lines, but both lines share the same category
-    expect(
-      computePackagingFee([
-        { category: 'cookies', quantity: 2 },
-        { category: 'cookies', quantity: 1 },
-      ])
-    ).toBe(40)
-  })
-
-  it('treats a missing/empty category defensively as a single bucket', () => {
-    expect(
-      computePackagingFee([
-        { category: '', quantity: 2 },
-        { category: '', quantity: 1 },
-      ])
-    ).toBe(40)
+  it('treats a missing itemsPerBox as 1 (one box per unit)', () => {
+    expect(computePackagingFee([{ quantity: 3 }])).toBe(50)
   })
 })
 
 describe('computeTotals', () => {
   it('always reports delivery as free while remembering the original fee', () => {
-    const totals = computeTotals([{ category: 'cookies', quantity: 1, price: 100 }])
+    const totals = computeTotals([{ quantity: 1, price: 100 }])
     expect(totals.deliveryFee).toBe(DELIVERY_FEE)
     expect(totals.deliveryFee).toBe(0)
     expect(totals.deliveryOriginal).toBe(ORIGINAL_DELIVERY_FEE)
@@ -67,11 +58,11 @@ describe('computeTotals', () => {
 
   it('sums subtotal correctly and folds packaging into the total', () => {
     const totals = computeTotals([
-      { category: 'breads-cakes', quantity: 2, price: 30 },
-      { category: 'cookies', quantity: 1, price: 240 },
+      { quantity: 2, price: 30, itemsPerBox: 1 },
+      { quantity: 1, price: 240, itemsPerBox: 1 },
     ])
     expect(totals.subtotal).toBe(2 * 30 + 240)
-    expect(totals.packagingFee).toBe(50) // 3 items, 2 categories -> 30 + 20
+    expect(totals.packagingFee).toBe(50) // 3 loose units -> 3 boxes -> 30 + 10*(3-1)
     expect(totals.total).toBe(totals.subtotal + totals.deliveryFee + totals.packagingFee)
   })
 
