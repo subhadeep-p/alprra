@@ -3,11 +3,10 @@ import Image from 'next/image'
 import { ArrowRight, Leaf, Shield, Zap, Heart, Users, Award } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
-import { Rating } from '@/components/ui/Rating'
 import { Accordion } from '@/components/ui/Accordion'
 import { ProductGrid } from '@/features/products/ProductGrid'
+import { GoogleReviews } from '@/features/reviews/GoogleReviews'
 import { getFeaturedProducts } from '@/lib/products'
-import { testimonials } from '@/data/testimonials'
 import { globalFaqs } from '@/data/faqs'
 import { buildFAQSchema } from '@/lib/schema/product'
 import { JsonLd } from '@/components/seo/JsonLd'
@@ -316,41 +315,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ─────────────────────────────────────────────── */}
-      <section className="py-20 md:py-28 bg-cream-50" aria-labelledby="testimonials-heading">
-        <div className="container-brand">
-          <div className="text-center mb-14">
-            <p className="text-sm font-semibold uppercase tracking-wider text-forest-600 mb-2">What customers say</p>
-            <h2
-              id="testimonials-heading"
-              className="text-3xl md:text-4xl font-semibold text-espresso-600"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              Loved across India
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {testimonials.slice(0, 6).map((t) => (
-              <blockquote
-                key={t.id}
-                className="bg-white rounded-2xl p-6 border border-cream-200 shadow-[var(--shadow-card)] flex flex-col gap-4"
-              >
-                <Rating value={t.rating} size="sm" />
-                <p className="text-sm text-espresso-500 leading-relaxed flex-1">&quot;{t.text}&quot;</p>
-                <footer className="flex items-center justify-between">
-                  <div>
-                    <cite className="not-italic text-sm font-semibold text-espresso-600">{t.name}</cite>
-                    <p className="text-xs text-espresso-400">{t.location}</p>
-                  </div>
-                  {t.product && (
-                    <Badge variant="cream" className="text-[10px]">{t.product}</Badge>
-                  )}
-                </footer>
-              </blockquote>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── TESTIMONIALS (live Google reviews, static fallback) ──────── */}
+      <GoogleReviews />
 
       {/* ── FAQ ───────────────────────────────────────────────────────── */}
       <section className="py-20 md:py-28 bg-white" aria-labelledby="faq-heading">

@@ -3,7 +3,10 @@ export const siteConfig = {
   tagline: 'Snack Better. Live Better.',
   description:
     'Alprra crafts premium healthy snacks and baked goods — millet cookies, energy bars, granola, and more — made with clean, natural ingredients and no artificial preservatives.',
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://alprra.com',
+  // Must match the host the server actually serves (Vercel 308-redirects the
+  // apex alprra.com -> www.alprra.com). Keeping canonical/OG/schema/sitemap on
+  // www avoids redirect-diluted SEO signals.
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.alprra.com',
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '916363132503',
   email: 'support@alprra.com',
   orderEmail: process.env.ORDER_NOTIFY_EMAIL ?? 'orders@alprra.com',
