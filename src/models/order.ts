@@ -20,6 +20,9 @@ export const OrderItemSchema = z.object({
   price: z.number(),
   quantity: z.number().min(1),
   image: z.string(),
+  // Optional so older persisted orders / clients without these fields still validate.
+  category: z.string().optional(),
+  minOrderQuantity: z.number().optional(),
 })
 
 export const OrderSchema = z.object({

@@ -1,20 +1,20 @@
 'use client'
 
-import { useState } from 'react'
 import { QuantityStepper } from '@/features/cart/QuantityStepper'
 
 interface QuantitySelectorProps {
   productSlug: string
+  value: number
+  onChange: (value: number) => void
+  min?: number
 }
 
-export function QuantitySelector({ productSlug: _productSlug }: QuantitySelectorProps) {
-  const [quantity, setQuantity] = useState(1)
-
+export function QuantitySelector({ productSlug: _productSlug, value, onChange, min = 1 }: QuantitySelectorProps) {
   return (
     <QuantityStepper
-      value={quantity}
-      onChange={setQuantity}
-      min={1}
+      value={value}
+      onChange={onChange}
+      min={min}
       max={20}
     />
   )

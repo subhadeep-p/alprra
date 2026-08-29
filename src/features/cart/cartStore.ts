@@ -9,6 +9,10 @@ export interface CartItem {
   price: number
   image: string
   quantity: number
+  /** Category slug, used to compute the per-category packaging fee at checkout. */
+  category: string
+  /** Per-product minimum order quantity, if the admin configured one. */
+  minOrderQuantity?: number
 }
 
 interface CartState {
@@ -38,6 +42,9 @@ export const useCartStore = create<CartState>()(
               ),
             }
           }
+          // First time this product is added — never add fewer than the
+          // product's configured minimum order quantity.
+          const seededQuantity = Math.max(quantity, product.minOrderQuantity ?? 1)
           return {
             items: [
               ...state.items,
@@ -47,7 +54,9 @@ export const useCartStore = create<CartState>()(
                 name: product.name,
                 price: product.price,
                 image: product.image,
-                quantity,
+                quantity: seededQuantity,
+                category: product.category,
+                minOrderQuantity: product.minOrderQuantity,
               },
             ],
           }

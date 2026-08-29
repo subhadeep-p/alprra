@@ -27,8 +27,13 @@ export default function ShippingPolicyPage() {
         <p>Freshly baked items (breads, cakes) require 24–48 hours preparation time before dispatch.</p>
         <h2>Shipping costs</h2>
         <ul>
-          <li>Free delivery on orders above ₹599</li>
-          <li>₹60 flat fee on orders below ₹599</li>
+          <li>Delivery is free on every order — no minimum order value required.</li>
+          <li>
+            A small packaging &amp; handling fee applies: ₹30 minimum per order. If your
+            order has more than 2 items, we add ₹10 for every distinct product category
+            in your cart (e.g. cookies, energy bars, granola) to cover extra packing
+            material.
+          </li>
         </ul>
         <h2>Contact</h2>
         <p>WhatsApp us at +91 6363132503 or email support@alprra.com for shipping queries.</p>

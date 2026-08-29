@@ -4,6 +4,7 @@ import { CustomerDetailsSchema, OrderItemSchema } from '@/models/order'
 import { db } from '@/lib/db/client'
 import { users, orders } from '@/lib/db/schema'
 import { rupeesToPaise } from '@/lib/db/products.repo'
+import { computeTotals, ORIGINAL_DELIVERY_FEE } from '@/lib/pricing'
 import { sql } from 'drizzle-orm'
 
 const OrderRequestSchema = z.object({
@@ -19,6 +20,15 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const order = OrderRequestSchema.parse(body)
+
+    // Recompute pricing server-side rather than trusting client-sent totals —
+    // delivery is always free now, and packaging & handling is derived from
+    // the items' categories/quantities (see src/lib/pricing.ts). The
+    // packaging fee isn't broken out into its own DB column (that would need
+    // a schema migration); it's folded into `total` below and still
+    // itemized for the customer in the UI and in the order email.
+    const { subtotal: subtotalRupees, deliveryFee: deliveryFeeRupees, packagingFee: packagingFeeRupees, total: totalRupees } =
+      computeTotals(order.items)
 
     // ------------------------------------------------------------------
     // 1. Persist to DB: upsert user by phone, then insert order
@@ -59,9 +69,6 @@ export async function POST(req: NextRequest) {
 
       userId = savedUser.id
 
-      const subtotalRupees = order.subtotal ?? order.total
-      const deliveryFeeRupees = order.total - subtotalRupees
-
       await db.insert(orders).values({
         orderNumber: order.orderId,
         userId,
@@ -70,7 +77,7 @@ export async function POST(req: NextRequest) {
         subtotal: rupeesToPaise(subtotalRupees),
         deliveryFee: rupeesToPaise(deliveryFeeRupees),
         discount: 0,
-        total: rupeesToPaise(order.total),
+        total: rupeesToPaise(totalRupees),
         currency: 'INR',
         status: 'pending',
         paymentMethod: 'cod',
@@ -102,7 +109,10 @@ Notes: ${order.customer.notes ?? '—'}
 Items:
 ${itemLines}
 
-Total: ₹${order.total}
+Subtotal: ₹${subtotalRupees}
+Delivery: FREE (was ₹${ORIGINAL_DELIVERY_FEE})
+Packaging & handling: ₹${packagingFeeRupees}
+Total: ₹${totalRupees}
 =============================
     `.trim()
 
@@ -115,7 +125,7 @@ Total: ₹${order.total}
       await resend.emails.send({
         from: 'orders@alprra.com',
         to: process.env.ORDER_NOTIFY_EMAIL ?? 'orders@alprra.com',
-        subject: `${subjectPrefix}New Order ${order.orderId} — ₹${order.total}`,
+        subject: `${subjectPrefix}New Order ${order.orderId} — ₹${totalRupees}`,
         text: emailText,
       })
     } else {

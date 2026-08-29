@@ -15,6 +15,16 @@ type UploadResult = { url?: string; error?: string }
 type Ingredient = { name: string; description: string; benefit: string }
 type FAQItem = { question: string; answer: string }
 type CustomField = { key: string; value: string }
+type NutritionInput = {
+  servingSize: string
+  calories: number | ''
+  protein: number | ''
+  carbs: number | ''
+  sugar: number | ''
+  fiber: number | ''
+  fat: number | ''
+  sodium?: number
+}
 
 export interface ProductEditorProps {
   initial: Partial<Product> & { id?: string }
@@ -73,18 +83,37 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
   const [reviewCount, setReviewCount] = useState(String(initial.reviewCount ?? ''))
   const [isFeatured, setIsFeatured] = useState(initial.isFeatured ?? false)
   const [isBestseller, setIsBestseller] = useState(initial.isBestseller ?? false)
+  const [minOrderQuantity, setMinOrderQuantity] = useState(String(initial.minOrderQuantity ?? ''))
 
   // Rich fields
   const [gallery, setGallery] = useState<string[]>(initial.gallery ?? [])
   const [tags, setTags] = useState<string[]>(initial.tags ?? [])
-  const [healthTags, setHealthTags] = useState<HealthTag[]>(initial.healthTags ?? [])
+  // Free-form strings: the preset chips below cover the curated list, but
+  // admins can also type a brand-new tag that isn't in ALL_HEALTH_TAGS.
+  const [healthTags, setHealthTags] = useState<string[]>(initial.healthTags ?? [])
+  const [newTagInput, setNewTagInput] = useState('')
   const [ingredients, setIngredients] = useState<Ingredient[]>(
     (initial.ingredients ?? []).map((i) => ({ name: i.name, description: i.description ?? '', benefit: i.benefit ?? '' }))
   )
   const [benefits, setBenefits] = useState<string[]>(initial.benefits ?? [])
-  const [nutrition, setNutrition] = useState(initial.nutrition ?? {
-    servingSize: '', calories: 0, protein: 0, carbs: 0, sugar: 0, fiber: 0, fat: 0, sodium: undefined as number | undefined,
-  })
+  // Numeric nutrition fields are kept as `number | ''` so a brand-new product
+  // starts with blank inputs instead of misleading zeros; converted back to
+  // numbers on save (see `nutritionForSave`).
+  const [nutrition, setNutrition] = useState<NutritionInput>(
+    initial.nutrition
+      ? { ...initial.nutrition }
+      : { servingSize: '', calories: '', protein: '', carbs: '', sugar: '', fiber: '', fat: '', sodium: undefined }
+  )
+  const nutritionForSave = {
+    servingSize: nutrition.servingSize,
+    calories: Number(nutrition.calories) || 0,
+    protein: Number(nutrition.protein) || 0,
+    carbs: Number(nutrition.carbs) || 0,
+    sugar: Number(nutrition.sugar) || 0,
+    fiber: Number(nutrition.fiber) || 0,
+    fat: Number(nutrition.fat) || 0,
+    sodium: nutrition.sodium,
+  }
   const [allergens, setAllergens] = useState<string[]>(initial.allergens ?? [])
   const [storageInstructions, setStorageInstructions] = useState(initial.storageInstructions ?? '')
   const [weight, setWeight] = useState(initial.weight ?? '')
@@ -126,7 +155,7 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
     healthTags,
     ingredients: ingredients.map((i) => ({ name: i.name, description: i.description || undefined, benefit: i.benefit || undefined })),
     benefits,
-    nutrition,
+    nutrition: nutritionForSave,
     allergens,
     storageInstructions,
     weight,
@@ -140,6 +169,7 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
     isFeatured,
     isBestseller,
     whyTheseIngredients: whyTheseIngredients || undefined,
+    minOrderQuantity: minOrderQuantity ? Number(minOrderQuantity) : undefined,
   }
 
   const tabs = [
@@ -197,7 +227,7 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
           <input type="hidden" name="healthTags" value={JSON.stringify(healthTags)} />
           <input type="hidden" name="ingredients" value={JSON.stringify(ingredients)} />
           <input type="hidden" name="benefits" value={JSON.stringify(benefits)} />
-          <input type="hidden" name="nutrition" value={JSON.stringify(nutrition)} />
+          <input type="hidden" name="nutrition" value={JSON.stringify(nutritionForSave)} />
           <input type="hidden" name="allergens" value={JSON.stringify(allergens)} />
           <input type="hidden" name="faq" value={JSON.stringify(faq)} />
           <input type="hidden" name="isFeatured" value={String(isFeatured)} />
@@ -289,6 +319,14 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
                 </div>
               </Field>
 
+              <div className="grid grid-cols-3 gap-4">
+                <Field label="Minimum order quantity" hint="Leave blank to allow ordering a single item.">
+                  <input name="minOrderQuantity" type="number" min="1" step="1" value={minOrderQuantity}
+                    onChange={(e) => setMinOrderQuantity(e.target.value)}
+                    className={inputCls} placeholder="1" />
+                </Field>
+              </div>
+
               <div className="flex gap-6">
                 <label className="flex items-center gap-2 text-sm cursor-pointer">
                   <input type="checkbox" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)}
@@ -309,8 +347,9 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
             <div className="space-y-6">
               {/* Health tags */}
               <div className="bg-white rounded-2xl border border-gray-200 p-6">
-                <h2 className="text-sm font-semibold text-espresso-600 mb-4">Health tags</h2>
-                <div className="flex flex-wrap gap-2">
+                <h2 className="text-sm font-semibold text-espresso-600 mb-1">Health tags</h2>
+                <p className="text-xs text-espresso-400 mb-4">Pick from the preset list or add your own custom tag.</p>
+                <div className="flex flex-wrap gap-2 mb-4">
                   {ALL_HEALTH_TAGS.map((tag) => (
                     <button
                       key={tag}
@@ -327,6 +366,56 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
                       {tag}
                     </button>
                   ))}
+                </div>
+
+                {/* Custom tags — anything selected above that isn't in the preset list */}
+                {healthTags.filter((t) => !(ALL_HEALTH_TAGS as string[]).includes(t)).length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {healthTags.filter((t) => !(ALL_HEALTH_TAGS as string[]).includes(t)).map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-honey-100 border border-honey-300 px-3 py-1 text-xs font-medium text-espresso-600"
+                      >
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => setHealthTags((prev) => prev.filter((t) => t !== tag))}
+                          className="text-espresso-400 hover:text-terracotta-600"
+                          aria-label={`Remove ${tag}`}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <input
+                    value={newTagInput}
+                    onChange={(e) => setNewTagInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        const tag = newTagInput.trim()
+                        if (tag && !healthTags.includes(tag)) setHealthTags((prev) => [...prev, tag])
+                        setNewTagInput('')
+                      }
+                    }}
+                    placeholder="Add a custom tag…"
+                    className={inputCls + ' flex-1'}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const tag = newTagInput.trim()
+                      if (tag && !healthTags.includes(tag)) setHealthTags((prev) => [...prev, tag])
+                      setNewTagInput('')
+                    }}
+                    className={addBtnCls}
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Add tag
+                  </button>
                 </div>
               </div>
 
@@ -429,8 +518,8 @@ export function ProductEditor({ initial, action, uploadAction, categories, submi
                   {(['calories', 'protein', 'carbs', 'sugar', 'fiber', 'fat'] as const).map((key) => (
                     <Field key={key} label={key.charAt(0).toUpperCase() + key.slice(1)}>
                       <input type="number" step="0.1" value={nutrition[key]}
-                        onChange={(e) => setNutrition((n) => ({ ...n, [key]: Number(e.target.value) }))}
-                        className={inputCls} />
+                        onChange={(e) => setNutrition((n) => ({ ...n, [key]: e.target.value === '' ? '' : Number(e.target.value) }))}
+                        className={inputCls} placeholder="0" />
                     </Field>
                   ))}
                   <Field label="Sodium (mg)">

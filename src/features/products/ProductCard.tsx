@@ -33,6 +33,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
   const displayTags = product.healthTags.slice(0, 3)
   const savings = product.compareAtPrice ? product.compareAtPrice - product.price : null
   const savingsPct = savings && product.compareAtPrice ? Math.round((savings / product.compareAtPrice) * 100) : null
+  const hasIngredientInfo = product.ingredients.length > 0 || product.allergens.length > 0
 
   return (
     <article className="group relative flex flex-col bg-white rounded-2xl border border-cream-200 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-card-hover)] transition-all duration-250 overflow-hidden">
@@ -63,30 +64,36 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           />
         </Link>
 
-        {/* Ingredient strip — slides up from bottom on hover, food photo stays visible */}
-        <div
-          className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out pointer-events-none"
-          aria-hidden="true"
-        >
-          <div className="bg-gradient-to-t from-espresso-900/95 to-espresso-900/70 px-3 pt-5 pb-3">
-            <div className="flex flex-wrap gap-1 mb-2">
-              {product.ingredients.slice(0, 3).map((ing) => (
-                <span
-                  key={ing.name}
-                  className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-medium text-white"
-                >
-                  {ing.name}
-                </span>
-              ))}
+        {/* Ingredient strip — slides up from bottom on hover, food photo stays visible.
+            Only rendered when there's actual ingredient/allergen data, otherwise an
+            empty dark panel would slide up with nothing in it. */}
+        {hasIngredientInfo && (
+          <div
+            className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out pointer-events-none"
+            aria-hidden="true"
+          >
+            <div className="bg-gradient-to-t from-espresso-900/95 to-espresso-900/70 px-3 pt-5 pb-3">
+              {product.ingredients.length > 0 && (
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {product.ingredients.slice(0, 3).map((ing) => (
+                    <span
+                      key={ing.name}
+                      className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-medium text-white"
+                    >
+                      {ing.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {product.allergens.length > 0 && (
+                <p className="text-[10px] text-cream-300">
+                  <span className="text-terracotta-300 font-semibold">Contains: </span>
+                  {product.allergens.join(', ')}
+                </p>
+              )}
             </div>
-            {product.allergens.length > 0 && (
-              <p className="text-[10px] text-cream-300">
-                <span className="text-terracotta-300 font-semibold">Contains: </span>
-                {product.allergens.join(', ')}
-              </p>
-            )}
           </div>
-        </div>
+        )}
       </div>
 
       {/* Card body */}
@@ -123,28 +130,41 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
           <span className="text-xs text-espresso-400 ml-auto">{product.weight}</span>
         </div>
 
-        {/* Mobile expand toggle */}
-        <button
-          className="flex items-center gap-1 text-xs font-medium text-forest-600 md:hidden"
-          onClick={() => setExpanded(!expanded)}
-          aria-expanded={expanded}
-        >
-          {expanded ? 'Hide details' : 'Ingredients & details'}
-          <ChevronDown className={cn('h-3 w-3 transition-transform duration-200', expanded && 'rotate-180')} />
-        </button>
+        {/* Gentle minimum-order-quantity hint */}
+        {product.minOrderQuantity && product.minOrderQuantity > 1 && (
+          <p className="text-[11px] text-espresso-400">
+            Sold in packs — min {product.minOrderQuantity}/order
+          </p>
+        )}
+
+        {/* Mobile expand toggle — hidden when there's nothing to expand into */}
+        {hasIngredientInfo && (
+          <button
+            className="flex items-center gap-1 text-xs font-medium text-forest-600 md:hidden"
+            onClick={() => setExpanded(!expanded)}
+            aria-expanded={expanded}
+          >
+            {expanded ? 'Hide details' : 'Ingredients & details'}
+            <ChevronDown className={cn('h-3 w-3 transition-transform duration-200', expanded && 'rotate-180')} />
+          </button>
+        )}
 
         {/* Mobile expanded ingredients */}
-        {expanded && (
+        {hasIngredientInfo && expanded && (
           <div className="md:hidden rounded-xl bg-cream-50 p-3 text-xs space-y-2">
-            <p className="font-semibold text-espresso-600">Key Ingredients</p>
-            <ul className="space-y-1">
-              {product.ingredients.slice(0, 4).map((ing) => (
-                <li key={ing.name} className="flex items-start gap-1.5 text-espresso-500">
-                  <span className="text-forest-600 mt-0.5">•</span>
-                  <span><strong>{ing.name}</strong>{ing.benefit && ` — ${ing.benefit}`}</span>
-                </li>
-              ))}
-            </ul>
+            {product.ingredients.length > 0 && (
+              <>
+                <p className="font-semibold text-espresso-600">Key Ingredients</p>
+                <ul className="space-y-1">
+                  {product.ingredients.slice(0, 4).map((ing) => (
+                    <li key={ing.name} className="flex items-start gap-1.5 text-espresso-500">
+                      <span className="text-forest-600 mt-0.5">•</span>
+                      <span><strong>{ing.name}</strong>{ing.benefit && ` — ${ing.benefit}`}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
             {product.allergens.length > 0 && (
               <p className="text-espresso-400">
                 <strong className="text-terracotta-500">Contains:</strong> {product.allergens.join(', ')}

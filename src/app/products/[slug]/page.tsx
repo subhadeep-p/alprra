@@ -7,8 +7,7 @@ import { buildProductSchema, buildFAQSchema, buildBreadcrumbSchema } from '@/lib
 import { JsonLd } from '@/components/seo/JsonLd'
 import { Badge } from '@/components/ui/Badge'
 import { Accordion } from '@/components/ui/Accordion'
-import { AddToCartButton } from '@/features/cart/AddToCartButton'
-import { QuantitySelector } from '@/features/products/QuantitySelector'
+import { ProductPurchase } from '@/features/products/ProductPurchase'
 import { ProductGrid } from '@/features/products/ProductGrid'
 import { formatPrice } from '@/lib/utils/format'
 import { CheckCircle2, Leaf, Thermometer, Package } from 'lucide-react'
@@ -126,10 +125,7 @@ export default async function ProductDetailPage({ params }: Props) {
             </div>
 
             {/* Add to cart */}
-            <div className="flex items-center gap-3">
-              <QuantitySelector productSlug={product.slug} />
-              <AddToCartButton product={product} size="lg" fullWidth />
-            </div>
+            <ProductPurchase product={product} />
 
             {/* WhatsApp order */}
             <p className="text-sm text-espresso-400">
@@ -151,12 +147,14 @@ export default async function ProductDetailPage({ params }: Props) {
                 { icon: CheckCircle2, text: 'Clean, natural ingredients' },
                 { icon: Package, text: `Made fresh · ${product.weight}` },
                 { icon: Thermometer, text: product.storageInstructions.split('.')[0] },
-              ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-start gap-2 text-xs text-espresso-400">
-                  <Icon className="h-4 w-4 text-forest-600 mt-0.5 shrink-0" />
-                  <span>{text}</span>
-                </div>
-              ))}
+              ]
+                .filter(({ text }) => text)
+                .map(({ icon: Icon, text }) => (
+                  <div key={text} className="flex items-start gap-2 text-xs text-espresso-400">
+                    <Icon className="h-4 w-4 text-forest-600 mt-0.5 shrink-0" />
+                    <span>{text}</span>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
@@ -173,25 +171,27 @@ export default async function ProductDetailPage({ params }: Props) {
             </section>
 
             {/* Ingredients */}
-            <section aria-labelledby="ingredients-heading">
-              <h2 id="ingredients-heading" className="text-2xl font-semibold text-espresso-600 mb-4" style={{ fontFamily: 'var(--font-display)' }}>
-                Ingredients
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {product.ingredients.map((ing) => (
-                  <div key={ing.name} className="rounded-xl bg-cream-50 border border-cream-200 p-4">
-                    <p className="font-semibold text-espresso-600 text-sm">{ing.name}</p>
-                    {ing.description && <p className="text-xs text-espresso-400 mt-0.5">{ing.description}</p>}
-                    {ing.benefit && (
-                      <p className="text-xs text-forest-600 mt-1.5 font-medium flex items-start gap-1">
-                        <Leaf className="h-3 w-3 mt-0.5 shrink-0" />
-                        {ing.benefit}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
+            {product.ingredients.length > 0 && (
+              <section aria-labelledby="ingredients-heading">
+                <h2 id="ingredients-heading" className="text-2xl font-semibold text-espresso-600 mb-4" style={{ fontFamily: 'var(--font-display)' }}>
+                  Ingredients
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {product.ingredients.map((ing) => (
+                    <div key={ing.name} className="rounded-xl bg-cream-50 border border-cream-200 p-4">
+                      <p className="font-semibold text-espresso-600 text-sm">{ing.name}</p>
+                      {ing.description && <p className="text-xs text-espresso-400 mt-0.5">{ing.description}</p>}
+                      {ing.benefit && (
+                        <p className="text-xs text-forest-600 mt-1.5 font-medium flex items-start gap-1">
+                          <Leaf className="h-3 w-3 mt-0.5 shrink-0" />
+                          {ing.benefit}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Why these ingredients — GEO content block */}
             {product.whyTheseIngredients && (
@@ -206,19 +206,21 @@ export default async function ProductDetailPage({ params }: Props) {
             )}
 
             {/* Health benefits */}
-            <section aria-labelledby="benefits-heading">
-              <h2 id="benefits-heading" className="text-2xl font-semibold text-espresso-600 mb-4" style={{ fontFamily: 'var(--font-display)' }}>
-                Health benefits
-              </h2>
-              <ul className="space-y-3">
-                {product.benefits.map((benefit) => (
-                  <li key={benefit} className="flex items-start gap-3 text-espresso-500">
-                    <CheckCircle2 className="h-5 w-5 text-forest-600 mt-0.5 shrink-0" />
-                    <span>{benefit}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            {product.benefits.length > 0 && (
+              <section aria-labelledby="benefits-heading">
+                <h2 id="benefits-heading" className="text-2xl font-semibold text-espresso-600 mb-4" style={{ fontFamily: 'var(--font-display)' }}>
+                  Health benefits
+                </h2>
+                <ul className="space-y-3">
+                  {product.benefits.map((benefit) => (
+                    <li key={benefit} className="flex items-start gap-3 text-espresso-500">
+                      <CheckCircle2 className="h-5 w-5 text-forest-600 mt-0.5 shrink-0" />
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
             {/* FAQ */}
             {product.faq.length > 0 && (
@@ -233,49 +235,63 @@ export default async function ProductDetailPage({ params }: Props) {
 
           {/* Sidebar: nutrition + allergens + storage */}
           <div className="space-y-6">
-            {/* Nutrition */}
-            <div className="rounded-2xl bg-white border border-cream-200 shadow-[var(--shadow-card)] p-5">
-              <h3 className="font-semibold text-espresso-600 mb-4">Nutrition information</h3>
-              <p className="text-xs text-espresso-400 mb-3">Per serving: {product.nutrition.servingSize}</p>
-              <div className="space-y-2.5">
-                {[
-                  { label: 'Calories', value: `${product.nutrition.calories} kcal` },
-                  { label: 'Protein', value: `${product.nutrition.protein}g` },
-                  { label: 'Carbohydrates', value: `${product.nutrition.carbs}g` },
-                  { label: 'of which Sugar', value: `${product.nutrition.sugar}g`, indent: true },
-                  { label: 'Dietary Fiber', value: `${product.nutrition.fiber}g` },
-                  { label: 'Total Fat', value: `${product.nutrition.fat}g` },
-                  ...(product.nutrition.sodium ? [{ label: 'Sodium', value: `${product.nutrition.sodium}mg` }] : []),
-                ].map(({ label, value, indent }) => (
-                  <div key={label} className={`flex justify-between text-sm ${indent ? 'pl-3 text-espresso-400' : ''}`}>
-                    <span className={indent ? '' : 'text-espresso-500'}>{label}</span>
-                    <span className="font-semibold text-espresso-600">{value}</span>
-                  </div>
-                ))}
+            {/* Nutrition — hidden when no meaningful nutrition data has been entered */}
+            {(product.nutrition.servingSize ||
+              product.nutrition.calories ||
+              product.nutrition.protein ||
+              product.nutrition.carbs ||
+              product.nutrition.sugar ||
+              product.nutrition.fiber ||
+              product.nutrition.fat) ? (
+              <div className="rounded-2xl bg-white border border-cream-200 shadow-[var(--shadow-card)] p-5">
+                <h3 className="font-semibold text-espresso-600 mb-4">Nutrition information</h3>
+                {product.nutrition.servingSize && (
+                  <p className="text-xs text-espresso-400 mb-3">Per serving: {product.nutrition.servingSize}</p>
+                )}
+                <div className="space-y-2.5">
+                  {[
+                    { label: 'Calories', value: `${product.nutrition.calories} kcal` },
+                    { label: 'Protein', value: `${product.nutrition.protein}g` },
+                    { label: 'Carbohydrates', value: `${product.nutrition.carbs}g` },
+                    { label: 'of which Sugar', value: `${product.nutrition.sugar}g`, indent: true },
+                    { label: 'Dietary Fiber', value: `${product.nutrition.fiber}g` },
+                    { label: 'Total Fat', value: `${product.nutrition.fat}g` },
+                    ...(product.nutrition.sodium ? [{ label: 'Sodium', value: `${product.nutrition.sodium}mg` }] : []),
+                  ].map(({ label, value, indent }) => (
+                    <div key={label} className={`flex justify-between text-sm ${indent ? 'pl-3 text-espresso-400' : ''}`}>
+                      <span className={indent ? '' : 'text-espresso-500'}>{label}</span>
+                      <span className="font-semibold text-espresso-600">{value}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : null}
 
             {/* Allergens */}
-            <div className="rounded-2xl bg-terracotta-50 border border-terracotta-100 p-5">
-              <h3 className="font-semibold text-espresso-600 mb-3">Allergen information</h3>
-              <div className="flex flex-wrap gap-2">
-                {product.allergens.map((a) => (
-                  <Badge key={a} variant="terracotta">{a}</Badge>
-                ))}
+            {product.allergens.length > 0 && (
+              <div className="rounded-2xl bg-terracotta-50 border border-terracotta-100 p-5">
+                <h3 className="font-semibold text-espresso-600 mb-3">Allergen information</h3>
+                <div className="flex flex-wrap gap-2">
+                  {product.allergens.map((a) => (
+                    <Badge key={a} variant="terracotta">{a}</Badge>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Storage */}
-            <div className="rounded-2xl bg-cream-50 border border-cream-200 p-5">
-              <h3 className="font-semibold text-espresso-600 mb-3 flex items-center gap-2">
-                <Thermometer className="h-4 w-4 text-forest-600" />
-                Storage instructions
-              </h3>
-              <p className="text-sm text-espresso-500 leading-relaxed">{product.storageInstructions}</p>
-            </div>
+            {product.storageInstructions && (
+              <div className="rounded-2xl bg-cream-50 border border-cream-200 p-5">
+                <h3 className="font-semibold text-espresso-600 mb-3 flex items-center gap-2">
+                  <Thermometer className="h-4 w-4 text-forest-600" />
+                  Storage instructions
+                </h3>
+                <p className="text-sm text-espresso-500 leading-relaxed">{product.storageInstructions}</p>
+              </div>
+            )}
 
             {/* SKU */}
-            <p className="text-xs text-espresso-300 px-1">SKU: {product.sku}</p>
+            {product.sku && <p className="text-xs text-espresso-300 px-1">SKU: {product.sku}</p>}
           </div>
         </div>
 

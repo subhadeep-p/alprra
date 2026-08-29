@@ -59,6 +59,7 @@ export async function saveProductAction(formData: FormData) {
     seoTitle: raw['seoTitle'] as string,
     seoDescription: raw['seoDescription'] as string,
     whyTheseIngredients: (raw['whyTheseIngredients'] as string) || undefined,
+    minOrderQuantity: raw['minOrderQuantity'] ? Number(raw['minOrderQuantity']) : undefined,
   }
 
   const errorTarget = productData.id ? `/admin/products/${productData.id}` : '/admin/products/new'
